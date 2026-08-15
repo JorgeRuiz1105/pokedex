@@ -22,7 +22,7 @@ public class DatabaseConnection {
     }
 
     public static void initDatabase(){
-        String pokemon_sql = "CREATE TABLE IF NOT EXISTS pokemon ("
+        String pokemonSQL = "CREATE TABLE IF NOT EXISTS pokemon ("
                 + "id INTEGER PRIMARY KEY,"
                 + "name TEXT NOT NULL,"
                 + "img TEXT,"
@@ -37,12 +37,12 @@ public class DatabaseConnection {
                 + "has_evo BOOLEAN"
                 + ");";
 
-        String type_sql = "CREATE TABLE IF NOT EXISTS type ("
+        String typeSQL = "CREATE TABLE IF NOT EXISTS type ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "name TEXT NOT NULL UNIQUE"
                 + ");";
 
-        String pokemon_type_sql = "CREATE TABLE IF NOT EXISTS pokemon_type ("
+        String pokemonTypeSQL = "CREATE TABLE IF NOT EXISTS pokemon_type ("
                 + "pokemon_id INTEGER NOT NULL,"
                 + "type_id INTEGER NOT NULL,"
                 + "PRIMARY KEY (pokemon_id, type_id),"
@@ -50,7 +50,7 @@ public class DatabaseConnection {
                 + "FOREIGN KEY (type_id) REFERENCES type(id) ON DELETE CASCADE"
                 + ");";
 
-        String evolutions_sql = "CREATE TABLE IF NOT EXISTS evolutions ("
+        String evolutionsSQL = "CREATE TABLE IF NOT EXISTS evolutions ("
                 + "pokemon_id INTEGER PRIMARY KEY,"
                 + "evolves_id INTEGER NOT NULL,"
                 + "stage INTEGER NOT NULL,"
@@ -60,10 +60,10 @@ public class DatabaseConnection {
         try(Connection conn = connect();
             Statement stmt = conn.createStatement()){
 
-            stmt.execute(pokemon_sql);
-            stmt.execute(type_sql);
-            stmt.execute(pokemon_type_sql);
-            stmt.execute(evolutions_sql);
+            stmt.execute(pokemonSQL);
+            stmt.execute(typeSQL);
+            stmt.execute(pokemonTypeSQL);
+            stmt.execute(evolutionsSQL);
 
             System.out.println("Database correctly initialized!");
         }catch(SQLException e){
