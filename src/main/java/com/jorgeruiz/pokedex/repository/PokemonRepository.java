@@ -1,10 +1,14 @@
 package com.jorgeruiz.pokedex.repository;
 
+import com.jorgeruiz.pokedex.model.LegendaryPokemon;
+import com.jorgeruiz.pokedex.model.MythicalPokemon;
 import com.jorgeruiz.pokedex.model.Pokemon;
 import com.jorgeruiz.pokedex.model.RegularPokemon;
 
 import java.lang.reflect.Type;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PokemonRepository {
     public void save(Pokemon pokemon) throws SQLException {
@@ -27,6 +31,44 @@ public class PokemonRepository {
         }catch (SQLException e){
             System.out.println("An error ocurred while saving pokemon: " + e.getMessage());
         }
+    }
+
+    public List<Pokemon> findAll() throws SQLException{
+        String pokemonSQL = "SELECT * FROM pokemon";
+        List<Pokemon> pokemons = new ArrayList<>();
+
+        try(Connection conn = DatabaseConnection.connect()){
+            try(PreparedStatement stmt = conn.prepareStatement(pokemonSQL);
+                ResultSet rs = stmt.executeQuery()){
+                    while(rs.next()){
+                        int id = rs.getInt("id");
+                        String name = rs.getString("name");
+                        String img = rs.getString("img");
+                        int hp = rs.getInt("base_hp");
+                        int def = rs.getInt("base_def");
+                        int atk = rs.getInt("base_atk");
+                        int spAtk = rs.getInt("base_sp_atk");
+                        int spDef = rs.getInt("base_sp_def");
+                        int spd = rs.getInt("base_spd");
+                        List<String> types = findPokemonTypes(conn, id);
+                        String rarity = rs.getString("rarity");
+
+                        Pokemon pokemon;
+
+                        if(rarity.equalsIgnoreCase("REGULAR")){
+                            String habitat = rs.getString("habitat");
+                            boolean hasEvolutions = rs.getBoolean("has_evo");
+                            pokemon = new RegularPokemon(id,name,types,img,hp,def,atk,spAtk,spDef,spd,habitat,hasEvolutions);
+                        } else if(rarity.equalsIgnoreCase("MYTHICAL")){
+                            pokemon = new MythicalPokemon(id,name,types,img,hp,atk,def,spAtk,spDef,spd);
+                        } else{
+                            pokemon = new LegendaryPokemon(id,name,types,img,hp,atk,def,spAtk,spDef,spd);
+                        }
+                        pokemons.add(pokemon);
+                    }
+            }
+        }
+        return pokemons;
     }
 
     private void savePokemonBase(Connection conn, String query, Pokemon pokemon) throws SQLException{
@@ -99,5 +141,22 @@ public class PokemonRepository {
         }
 
         throw new SQLException("Error while attempting to get or create record for: " + typeName);
+    }
+
+    private List<String> findPokemonTypes(Connection conn, int id) throws SQLException{
+        String findSQL = "SELECT t.name FROM type t "
+                + "INNER JOIN pokemon_type pt ON t.id = pt.type_id "
+                + "WHERE pt.pokemon_id = ?";
+        List <String> types = new ArrayList<>();
+
+        try(PreparedStatement findStmt = conn.prepareStatement(findSQL)){
+            findStmt.setInt(1,id);
+            try(ResultSet rs = findStmt.executeQuery()){
+                while(rs.next()){
+                    types.add(rs.getString("name"));
+                }
+            }
+        }
+        return types;
     }
 }
