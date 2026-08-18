@@ -36,4 +36,8 @@ public class PokeApiClient {
     public String fetchPokemonSpecies(int id) throws IOException, InterruptedException {
         return fetchFromUrl(BASE_URL + "pokemon-species/" + id);
     }
+
+    public String fetchEvolutionChain(String url) throws IOException, InterruptedException {
+        return fetchFromUrl(url);
+    }
 }
