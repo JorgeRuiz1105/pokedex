@@ -33,6 +33,41 @@ public class PokemonRepository {
         }
     }
 
+    public Pokemon findById(int id) throws SQLException{
+        String pokemonSQL = "SELECT * FROM pokemon WHERE id = ?";
+
+        try(Connection conn = DatabaseConnection.connect()){
+            try(PreparedStatement stmt = conn.prepareStatement(pokemonSQL)){
+                stmt.setInt(1, id);
+                try(ResultSet rs = stmt.executeQuery()){
+                    if(rs.next()){
+                        String name = rs.getString("name");
+                        String img = rs.getString("img");
+                        int hp = rs.getInt("base_hp");
+                        int def = rs.getInt("base_def");
+                        int atk = rs.getInt("base_atk");
+                        int spAtk = rs.getInt("base_sp_atk");
+                        int spDef = rs.getInt("base_sp_def");
+                        int spd = rs.getInt("base_spd");
+                        List<String> types = findPokemonTypes(conn, id);
+                        String rarity = rs.getString("rarity");
+
+                        if(rarity.equalsIgnoreCase("REGULAR")){
+                            String habitat = rs.getString("habitat");
+                            boolean hasEvolutions = rs.getBoolean("has_evo");
+                            return new RegularPokemon(id,name,types,img,hp,atk,def,spAtk,spDef,spd,habitat,hasEvolutions);
+                        } else if(rarity.equalsIgnoreCase("MYTHICAL")){
+                            return new MythicalPokemon(id,name,types,img,hp,atk,def,spAtk,spDef,spd);
+                        } else {
+                            return new LegendaryPokemon(id, name, types, img, hp, atk, def, spAtk, spDef, spd);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public List<Pokemon> findAll() throws SQLException{
         String pokemonSQL = "SELECT * FROM pokemon";
         List<Pokemon> pokemons = new ArrayList<>();
@@ -58,7 +93,7 @@ public class PokemonRepository {
                         if(rarity.equalsIgnoreCase("REGULAR")){
                             String habitat = rs.getString("habitat");
                             boolean hasEvolutions = rs.getBoolean("has_evo");
-                            pokemon = new RegularPokemon(id,name,types,img,hp,def,atk,spAtk,spDef,spd,habitat,hasEvolutions);
+                            pokemon = new RegularPokemon(id,name,types,img,hp,atk,def,spAtk,spDef,spd,habitat,hasEvolutions);
                         } else if(rarity.equalsIgnoreCase("MYTHICAL")){
                             pokemon = new MythicalPokemon(id,name,types,img,hp,atk,def,spAtk,spDef,spd);
                         } else{
