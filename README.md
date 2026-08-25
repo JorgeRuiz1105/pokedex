@@ -1,4 +1,4 @@
-# Java Pokédex
+# Java Pokedex Backend
 
 A modular Java backend that consumes PokeAPI. This project applies object-oriented design patterns, layered architecture, and a local-first cache-aside persistence strategy with SQLite.
 
