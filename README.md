@@ -16,6 +16,7 @@ A modular Java backend that consumes PokeAPI. This project applies object-orient
 ```text
 com.jorgeruiz.pokedex/
 ├── api/          # Native HTTP client and JSON mapping
+├── gui/          # Testing graphical user interface
 ├── model/        # Polymorphic domain entities (Regular, Legendary and Mythical)
 ├── repository/   # SQLite persistence with JDBC
 └── service/      # Business logic and local-first strategy
@@ -37,3 +38,7 @@ com.jorgeruiz.pokedex/
 - JSON serialization and deserialization
 - JDBC and SQLite
 - Many-to-many database relationships
+
+## Screenshots
+
+![App Screenshot](images/img.png)
