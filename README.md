@@ -42,3 +42,5 @@ com.jorgeruiz.pokedex/
 ## Screenshots
 
 ![App Screenshot](images/img.png)
+![App Screenshot](images/img_1.png)
+![App Screenshot](images/img_2.png)
